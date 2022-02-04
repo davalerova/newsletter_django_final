@@ -1,6 +1,6 @@
 from os import stat
 from django.shortcuts import render
-from .serializers import NewsletterSerializer, CreateNewsletterSerializer
+from .serializers import NewsletterSerializer, CreateNewsletterSerializer, ViewNewsletterSerializer
 from .models import Newsletter
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
@@ -63,5 +63,14 @@ class NewsLetterViewSet(ModelViewSet):
                     "subscibre": "The subscribe was add"
                 })
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED, data={
-            "message": "El boletin no ha alcanzado lso votos suicientes"
+            "message": "El boletin no ha alcanzado los votos suficientes"
         })
+    
+    @action(methods=['GET'], detail=False)
+    def own(self, request):
+        id = request.user.id
+        is_admin = request.user.is_admin
+        newsletters = self.queryset.filter(author=id)
+            
+        serialized = ViewNewsletterSerializer(newsletters, many=True)
+        return Response(status=status.HTTP_200_OK, data=serialized.data)
