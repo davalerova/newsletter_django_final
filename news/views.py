@@ -6,10 +6,12 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework import status, permissions
 from rest_framework.response import Response
+from .permissions import IsAdminOrReadOnly
 # Create your views here.
 
 class NewsLetterViewSet(ModelViewSet):
-    permissions_classes = (permissions.IsAuthenticated,)
+    permissions_classes = (IsAdminOrReadOnly,)
+    # permissions_classes = (permissions.IsAuthenticated,)
     # permissions.DjangoModelPermissions
     queryset = Newsletter.objects.all()
     serializer_class = NewsletterSerializer
